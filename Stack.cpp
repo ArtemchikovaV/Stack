@@ -21,27 +21,26 @@ struct SStack
 
 	double Pop( );
 	void Push( double value );
-
 };
 
 struct SProcessor
 {
 	SStack *stack;																//Stack structure
-	void ProcConstruct( ) { stack = new SStack; stack->StackConstruct( );}		//constructor
+	void ProcConstruct( ){ stack = new SStack; stack->StackConstruct( );}		//constructor
 	void ProcDestruct( ) { delete stack; stack = NULL; }						//destructor
+	bool IsOk( );													//verification
 
-	void add( );							//+										
-	void sub( );							//-
-	void mul( );							//*
-	void div( );							//:	
+	void Add( );							//+										
+	void Sub( );							//-
+	void Mul( );							//*
+	void Div( );							//:	
 	void Pow( );							//^
 	void Sin( );							//sin function
 	void Cos( );							//cos function
+
 };
 
-void StackDump( SStack *stack );			//Stack general information
-bool IsOk( SStack *stack );					//Stack verification
-
+//____________________________________________________
 void SStack::Push( double value )
 {
 	if ( top == (SIZE - 1))
@@ -67,7 +66,7 @@ double SStack::Pop( )
 }
 
 //+___________________________________________________
-void SProcessor::add( )
+void SProcessor::Add( )
 {
 	double val1 = stack->Pop( );
 	double val2 = stack->Pop( );
@@ -75,7 +74,7 @@ void SProcessor::add( )
 }
 
 //-___________________________________________________
-void SProcessor::sub( )
+void SProcessor::Sub( )
 {
 	double val1 = stack->Pop( );
 	double val2 = stack->Pop( );
@@ -83,7 +82,7 @@ void SProcessor::sub( )
 }
 
 //*___________________________________________________
-void SProcessor::mul( )
+void SProcessor::Mul( )
 {
 	double val1 = stack->Pop( );
 	double val2 = stack->Pop( );
@@ -91,7 +90,7 @@ void SProcessor::mul( )
 }
 
 //:___________________________________________________
-void SProcessor::div( )
+void SProcessor::Div( )
 {
 	double val1 = stack->Pop( );
 	double val2 = stack->Pop( );
@@ -121,18 +120,8 @@ void SProcessor::Cos( )
 }
 
 
-//____________________________________________________
-void StackDump( SStack *stack )											//General information
-{
-	printf("Adress: %x\nStack size: %d\n", stack, sizeof( *stack ));
-	//cout << "Number of elements:	" << stack->top << endl;
-	//cout << "Adress:	" << stack << endl;
-	//cout << "Stack size:	" << sizeof( *stack ) << endl;
-	cout << "Number of elements:	" << stack->top << endl;
-}
-
-//____________________________________________________
-bool IsOk( SStack *stack )
+//___________________________________________________
+bool SProcessor::IsOk( )
 {
 	if ( stack == NULL )
 	{
@@ -142,32 +131,52 @@ bool IsOk( SStack *stack )
 		return true;
 }
 
+
+//____________________________________________________
+void StackDump( SStack * stack )											//General information
+{
+	printf("Number of elements: %d\n", stack->top );
+	printf("Adress: %x\nStack size: %d\n", stack, sizeof( *stack ));
+}
+
 //____________________________________________________
 int main()
 {
-	char *command;
+	const char *command = new const char[5];
 	double value;
 	SProcessor *proc = new SProcessor; 
-	proc->ProcConstruct( );
 
-	cin >> command;
-	while ( command != "end" )
+	proc->ProcConstruct( );
+	scanf("%s", command );
+	
+	if ( !proc->IsOk( ) ) 
 	{
+		printf( "Stack error!\n");
+		return 0;
+	}
+
+	while ( strcmp( command, "end" ) )
+	{
+		if ( !strcmp( command, "push" ) )
+		{ 
+			scanf("%lf", &value ); 
+			proc->stack->Push( value );
+		}
+
+		if ( !strcmp( command, "pop" ) ) { proc->stack->Pop( );}
+		if ( !strcmp( command, "add" ) ) { proc->Add( );}
+		if ( !strcmp( command, "sub" ) ) { proc->Sub( );}
+		if ( !strcmp( command, "mul" ) ) { proc->Mul( );}
+		if ( !strcmp( command, "div" ) ) { proc->Div( );}
+		if ( !strcmp( command, "pow" ) ) { proc->Pow( );}
+		if ( !strcmp( command, "sin" ) ) { proc->Sin( );}
+		if ( !strcmp( command, "cos" ) ) { proc->Cos( );}
 		
-		if ( command == "push" ) { cin >> value; proc->stack->Push( value );}
-		if ( command == "pop" ) { proc->stack->Pop( );}
-		if ( command == "add" ) { proc->add( );}
-		if ( command == "sub" ) { proc->sub( );}
-		if ( command == "mul" ) { proc->mul( );}
-		if ( command == "div" ) { proc->div( );}
-		if ( command == "pow" ) { proc->Pow( );}
-		if ( command == "sin" ) { proc->Sin( );}
-		if ( command == "cos" ) { proc->Cos( );}
-		
-		cin >> command;		
+		scanf("%s", command );		
 	}
 
 	StackDump( proc->stack );
+
 	proc->ProcDestruct( );
 	delete proc;
 	return 0;
