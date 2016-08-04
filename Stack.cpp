@@ -1,12 +1,7 @@
 //Interpriter 
 #include <iostream> 
-using std::cout;
-using std::cin;
-using std::endl; 
-#include <string>
-using std::string;
 #include <cmath>
-#include <cassert>
+#include <assert.h>
 #include <stdio.h>
 
 const int SIZE = 10;
@@ -28,7 +23,7 @@ struct SProcessor
 	SStack *stack;																//Stack structure
 	void ProcConstruct( ){ stack = new SStack; stack->StackConstruct( );}		//constructor
 	void ProcDestruct( ) { delete stack; stack = NULL; }						//destructor
-	bool IsOk( );													//verification
+	void IsOk( ){ assert( stack != NULL ); };									//verification
 
 	void Add( );							//+										
 	void Sub( );							//-
@@ -119,19 +114,6 @@ void SProcessor::Cos( )
 	stack->Push( cos(val) );
 }
 
-
-//___________________________________________________
-bool SProcessor::IsOk( )
-{
-	if ( stack == NULL )
-	{
-		return false;
-	}
-	else 
-		return true;
-}
-
-
 //____________________________________________________
 void StackDump( SStack * stack )											//General information
 {
@@ -147,14 +129,9 @@ int main()
 	SProcessor *proc = new SProcessor; 
 
 	proc->ProcConstruct( );
-	scanf("%s", command );
+	proc->IsOk( );
 	
-	if ( !proc->IsOk( ) ) 
-	{
-		printf( "Stack error!\n");
-		return 0;
-	}
-
+	scanf("%s", command );
 	while ( strcmp( command, "end" ) )
 	{
 		if ( !strcmp( command, "push" ) )
